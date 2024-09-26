@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
 from tensorflow.keras.metrics import Precision, Recall, BinaryAccuracy
+from tensorflow.keras.models import load_model
 
 current_script_path = os.path.dirname(__file__)
 images_dir_path = os.path.join(current_script_path, 'images')
@@ -17,7 +18,6 @@ image_exts = ['jpeg', 'jpg', 'png', 'bmp']
 for label in os.listdir(images_dir_path):
     label_path = os.path.join(images_dir_path, label)
     for image_name in os.listdir(label_path):
-        print(image_name)
         image_extention = (image_name.split(".")[1]).lower() ### take the second part
         
         ### if the extention is not in the list, remove th image
@@ -177,3 +177,17 @@ else:
     print(f"******* detected as NOT STOP with {yhat_test} *******")
     plt.suptitle("predicted as NO STOP")
 plt.show()
+
+##################################################
+###               SAVE the model               ###
+##################################################
+models_dir = os.path.join(current_script_path, 'models')
+model.save(os.path.join(models_dir, 'stop_sign_detector_cnn.h5'))
+print("!!!!!!!!! MODEL SAVED !!!!!!!!!")
+### loading the model
+new_model = load_model(os.path.join(models_dir, 'stop_sign_detector_cnn.h5'))
+yhat_new = new_model.predict(encapsolated_img)
+if yhat_test > 0.5:
+    print(f"******* saved model detected as STOP with {yhat_test} *******")
+else:
+    print(f"******* saved model detected as NOT STOP with {yhat_test} *******")
