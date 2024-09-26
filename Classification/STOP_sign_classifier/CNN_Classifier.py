@@ -41,12 +41,34 @@ data_iterator = scaled_data.as_numpy_iterator()
 
 ### grabing one batch of data
 batch = data_iterator.next()
+"""
 print(batch[0].max()) ### max number of intestity which should be 1 after normalizing
 print(len(batch)) ### 2 : images and lables 
+"""
 
 ### show 4 of the images in the batch
+"""
 fig, ax = plt.subplots(nrows=1, ncols=4, figsize=(10, 3))
 for idx, img in enumerate(batch[0][:4]):
     ax[idx].imshow(img)
     ax[idx].title.set_text(batch[1][idx])
 plt.show()
+"""
+
+##################################################
+###                 SPLIT DATA                 ###
+##################################################
+number_of_batches = len(data)
+print(number_of_batches) ### there is 7 batches of data.
+### after spliting data, overall there should be 7 batches again. dont miss any
+
+train_size = int(number_of_batches*.7) ### 70% of data
+val_size = int(number_of_batches*.2)+1 ### 20% of data
+test_size = int(number_of_batches*.1)+1 ### 10% of data
+print(f"train size: {train_size}, val size: {val_size}, test size: {test_size}")
+print(number_of_batches == (train_size + val_size + test_size)) ### SHOULD BE TRUE
+
+train = data.take(train_size) ### allocate 4 batches of data to train
+val = data.skip(train_size).take(val_size) ### skip the batches that was alocated to train
+test = data.skip(train_size + val_size).take(test_size)
+print(len(train))
