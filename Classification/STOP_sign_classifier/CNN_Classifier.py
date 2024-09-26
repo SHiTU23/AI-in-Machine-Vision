@@ -7,8 +7,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
 from tensorflow.keras.metrics import Precision, Recall, BinaryAccuracy
 
-currect_script_path = os.path.dirname(__file__)
-images_dir_path = os.path.join(currect_script_path, 'images')
+current_script_path = os.path.dirname(__file__)
+images_dir_path = os.path.join(current_script_path, 'images')
 
 ##################################################
 ###     Clear dataset from other extensions    ###
@@ -118,10 +118,10 @@ print(model.summary())
 #####################################
 ###           TRAIN DATA          ###
 #####################################
-logdir = os.path.join(currect_script_path, 'logs')
+logdir = os.path.join(current_script_path, 'logs')
 ## save check points and logs
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
-hist = model.fit(train, epochs=10, validation_data=val, callbacks=[tensorboard_callback])
+hist = model.fit(train, epochs=5, validation_data=val, callbacks=[tensorboard_callback])
 print(hist)
 
 #####################################
@@ -156,3 +156,20 @@ for batch in test.as_numpy_iterator():
     accuracy.update_state(y, yhat)
 ### by having 1 for all of them, the model is working good
 print(f"Precision: {precision.result().numpy()}, Recall: {recall.result().numpy()}, Accuracy: {accuracy.result().numpy()}")
+
+##################################################
+###               Test the model               ###
+##################################################
+test_image_path = os.path.join(current_script_path, 'stop.jpg')
+img = cv2.imread(test_image_path)
+resized_img = cv2.resize(img, (256, 256))
+normalized_image = resized_img/255
+
+### the model expecting a batch of data, so we need to encapsolate the image
+encapsolated_img = np.expand_dims(normalized_image, 0)
+
+yhat_test = model.predict(encapsolated_img)
+if yhat_test > 0.5:
+    print(f"******* detected as STOP with {yhat_test} *******")
+else:
+    print(f"******* detected as NOT STOP with {yhat_test} *******")
