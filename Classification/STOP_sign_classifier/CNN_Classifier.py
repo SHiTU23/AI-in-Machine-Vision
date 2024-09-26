@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten
+from tensorflow.keras.metrics import Precision, Recall, BinaryAccuracy
 
 currect_script_path = os.path.dirname(__file__)
 images_dir_path = os.path.join(currect_script_path, 'images')
@@ -126,6 +127,7 @@ print(hist)
 #####################################
 ###      PLOT THE PERFORMANCE     ###
 #####################################
+"""
 loss_fig = plt.figure()
 plt.plot(hist.history['loss'], color='teal', label='loss')
 plt.plot(hist.history['val_loss'], color='orange', label='val_loss')
@@ -137,3 +139,20 @@ plt.plot(hist.history['val_accuracy'], color='orange', label='val_accuracy')
 fig.suptitle("Accuracy", fontsize=20)
 plt.legend(loc="upper left")
 plt.show()
+"""
+
+##################################################
+###             Evaluate the model             ###
+##################################################
+precision = Precision()
+recall = Recall()
+accuracy = BinaryAccuracy()
+
+for batch in test.as_numpy_iterator():
+    X, y = batch
+    yhat = model.predict(X)
+    precision.update_state(y, yhat)
+    recall.update_state(y, yhat)
+    accuracy.update_state(y, yhat)
+### by having 1 for all of them, the model is working good
+print(f"Precision: {precision.result().numpy()}, Recall: {recall.result().numpy()}, Accuracy: {accuracy.result().numpy()}")
