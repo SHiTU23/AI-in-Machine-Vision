@@ -121,7 +121,7 @@ print(model.summary())
 logdir = os.path.join(current_script_path, 'logs')
 ## save check points and logs
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=logdir)
-hist = model.fit(train, epochs=5, validation_data=val, callbacks=[tensorboard_callback])
+hist = model.fit(train, epochs=20, validation_data=val, callbacks=[tensorboard_callback])
 print(hist)
 
 #####################################
@@ -169,7 +169,11 @@ normalized_image = resized_img/255
 encapsolated_img = np.expand_dims(normalized_image, 0)
 
 yhat_test = model.predict(encapsolated_img)
+plt.imshow(normalized_image)
 if yhat_test > 0.5:
     print(f"******* detected as STOP with {yhat_test} *******")
+    plt.suptitle("predicted as STOP")
 else:
     print(f"******* detected as NOT STOP with {yhat_test} *******")
+    plt.suptitle("predicted as NO STOP")
+plt.show()
